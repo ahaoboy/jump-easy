@@ -2,7 +2,7 @@
   "name": "jump-easy",
   "displayName": "jump-easy",
   "description": "jump-easy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "ahaoboy",
   "license": "MIT",
   "publisher": "ahaoboy",
@@ -14,12 +14,8 @@
   "engines": {
     "vscode": "^1.94.0"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "*"
-  ],
+  "categories": ["Other"],
+  "activationEvents": ["*"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -43,10 +39,7 @@
         "jump-easy.defaultIndex": {
           "type": "string",
           "default": "zero based",
-          "enum": [
-            "zero based",
-            "one based"
-          ],
+          "enum": ["zero based", "one based"],
           "enumDescriptions": [
             "The index is zero-based, mostly used by programmers or developers, counts by 1, starting at 0. For example, the first character index in the text body will be at index 0. Therefore, if you enter 2 in the prompt, your cursor will jump to the 3rd character",
             "One based indexes are natural language indices, that counts by 1, starting at 1. For example, the first character index in the text body will be at index 1. Therefore, if you enter 2 in the prompt, your cursor will jump to the 2nd character"
@@ -56,12 +49,7 @@
           "type": "string",
           "default": "Top",
           "description": "This determines the behavior of how your viewport will scroll to an index that isn't currently within the bounds of what you see",
-          "enum": [
-            "Default",
-            "Top",
-            "Center",
-            "CenterIfOutsideTheViewport"
-          ],
+          "enum": ["Default", "Top", "Center", "CenterIfOutsideTheViewport"],
           "enumDescriptions": [
             "The range will be revealed with as little scrolling as possible",
             "The range will always be revealed at the top of the viewport",
