@@ -4,18 +4,36 @@ const EXTN_QUALIFIER = "jump-easy"
 const COMMANDS = Object.seal({
   jumpEasy: `${EXTN_QUALIFIER}.jump`,
 })
-let cachedInput: string | undefined = undefined;
+let cachedInput: string | undefined = undefined
 let statusbar: vscode.StatusBarItem
 let indexing: string = getEnumConfiguration("defaultIndex", "zero based", [
   "zero based",
   "one based",
 ])
 
+function getCharPosition(s: string, p: number): number {
+  let n = 0
+  let i = 0
+  for (const c of s) {
+    if (n >= p) {
+      break
+    }
+    n++
+    i += c.length
+  }
+  return i
+}
+
 function select(editor: vscode.TextEditor, start: number, end: number) {
-  let startPos = editor.document.positionAt(start)
+  const code = editor.document.getText()
+
+  const charStart = getCharPosition(code, start)
+  const charEnd = getCharPosition(code, end)
+
+  let startPos = editor.document.positionAt(charStart)
   startPos = editor.document.validatePosition(startPos)
 
-  let endPos = editor.document.positionAt(end)
+  let endPos = editor.document.positionAt(charEnd)
   endPos = editor.document.validatePosition(endPos)
 
   const selection = new vscode.Selection(startPos, endPos)
@@ -68,7 +86,7 @@ export function activate(context: vscode.ExtensionContext) {
           ignoreFocusOut: true,
           prompt: `Your current index setting is ${indexing} and there are ${new Intl.NumberFormat().format(editor.document.getText().length)} characters in this text body`,
           title: "Jump to an absolute character index in the active editor",
-          value: cachedInput === undefined ? '' : cachedInput,
+          value: cachedInput === undefined ? "" : cachedInput,
           validateInput: (value) => {
             if (!value.match(/^\d+$/m) && !value.match(/^\d+:\d+$/m))
               return "Invalid input. Please enter a valid positive whole number"
@@ -77,25 +95,25 @@ export function activate(context: vscode.ExtensionContext) {
         })
 
         if (input === undefined) return
-        cachedInput = input;
+        cachedInput = input
 
-        if (input.includes(":")) {
+        if (input.match(/^\d+:\d+$/m)) {
           let [start, end] = input.split(":").map((i) => clamp(+i, 0))
           if (indexing === "one based") {
             start = clamp(start - 1, 0)
             end = clamp(end - 1, 0)
           }
           select(editor, start, end)
-        } else {
-          let index = clamp(+input, 0)
+        } else if (input.match(/^\d+$/m)) {
+          let start = clamp(+input, 0)
+          if (indexing === "one based") start = clamp(start - 1, 0)
+          select(editor, start, start)
 
-          if (indexing === "one based") index = clamp(index - 1, 0)
+          // let target = editor.document.positionAt(index)
+          // target = editor.document.validatePosition(target)
 
-          let target = editor.document.positionAt(index)
-          target = editor.document.validatePosition(target)
-
-          editor.revealRange(new vscode.Range(target, target), getRevealType())
-          editor.selection = new vscode.Selection(target, target)
+          // editor.revealRange(new vscode.Range(target, target), getRevealType())
+          // editor.selection = new vscode.Selection(target, target)
         }
       },
     ),
