@@ -24,6 +24,9 @@ function getCharPosition(s: string, p: number): number {
   return i
 }
 
+const RE1 = /^(\d+)$/m
+const RE2 = /^(\d+)\D(\d+)$/m
+
 function select(editor: vscode.TextEditor, start: number, end: number) {
   const code = editor.document.getText()
 
@@ -88,8 +91,8 @@ export function activate(context: vscode.ExtensionContext) {
           title: "Jump to an absolute character index in the active editor",
           value: cachedInput === undefined ? "" : cachedInput,
           validateInput: (value) => {
-            if (!value.match(/^\d+$/m) && !value.match(/^\d+:\d+$/m))
-              return "Invalid input. Please enter a valid positive whole number"
+            if (!value.match(RE1) && !value.match(RE2))
+              return "Invalid input. Please enter a valid positive whole number(n or a:b)"
             return null
           },
         })
@@ -97,23 +100,19 @@ export function activate(context: vscode.ExtensionContext) {
         if (input === undefined) return
         cachedInput = input
 
-        if (input.match(/^\d+:\d+$/m)) {
-          let [start, end] = input.split(":").map((i) => clamp(+i, 0))
+        const r1 = input.match(RE1)
+        const r2 = input.match(RE2)
+        if (r2) {
+          let [_, start, end] = [...r2].map((i) => +i)
           if (indexing === "one based") {
             start = clamp(start - 1, 0)
             end = clamp(end - 1, 0)
           }
           select(editor, start, end)
-        } else if (input.match(/^\d+$/m)) {
+        } else if (r1) {
           let start = clamp(+input, 0)
           if (indexing === "one based") start = clamp(start - 1, 0)
           select(editor, start, start)
-
-          // let target = editor.document.positionAt(index)
-          // target = editor.document.validatePosition(target)
-
-          // editor.revealRange(new vscode.Range(target, target), getRevealType())
-          // editor.selection = new vscode.Selection(target, target)
         }
       },
     ),

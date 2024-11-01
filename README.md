@@ -3,6 +3,8 @@ jump-easy
 
 ## ctrl+shift+j
 
+You can use number + non-number + number to jump to a selection
+
 - ```n```: Jump to the nth character
 - ```a:b```: Jump to selection [a, b)
 
