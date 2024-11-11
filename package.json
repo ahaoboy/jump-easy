@@ -2,7 +2,7 @@
   "name": "jump-easy",
   "displayName": "jump-easy",
   "description": "jump-easy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "ahaoboy",
   "license": "MIT",
   "publisher": "ahaoboy",
@@ -42,6 +42,15 @@
       "type": "object",
       "title": "jump",
       "properties": {
+        "jump-easy.mode": {
+          "type": "string",
+          "default": "char",
+          "enum": ["byte", "char"],
+          "enumDescriptions": [
+            "In byte mode, treat the string as a Uint8Array",
+            "In char mode, treat the string as a char array"
+          ]
+        },
         "jump-easy.defaultIndex": {
           "type": "string",
           "default": "zero based",

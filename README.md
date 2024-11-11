@@ -29,3 +29,11 @@ console.log("🆒🆒🆒🆒");
 		<img src="assets/jump_a_b.png">
 	</a>
 </div>
+
+
+
+## Config
+
+### mode
+- char
+- byte

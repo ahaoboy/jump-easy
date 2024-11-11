@@ -11,6 +11,8 @@ let indexing: string = getEnumConfiguration("defaultIndex", "zero based", [
   "one based",
 ])
 
+let mode: string = getEnumConfiguration("mode", "char", ["char", "byte"])
+
 function getCharPosition(s: string, p: number): number {
   let n = 0
   let i = 0
@@ -30,8 +32,8 @@ const RE2 = /^(\d+)\D(\d+)$/m
 function select(editor: vscode.TextEditor, start: number, end: number) {
   const code = editor.document.getText()
 
-  const charStart = getCharPosition(code, start)
-  const charEnd = getCharPosition(code, end)
+  const charStart = mode === "byte" ? start : getCharPosition(code, start)
+  const charEnd = mode === "byte" ? end : getCharPosition(code, end)
 
   let startPos = editor.document.positionAt(charStart)
   startPos = editor.document.validatePosition(startPos)
@@ -69,6 +71,9 @@ export function activate(context: vscode.ExtensionContext) {
             "zero based",
             "one based",
           ])
+
+        if (e.affectsConfiguration(`${EXTN_QUALIFIER}.mode`))
+          mode = getEnumConfiguration("mode", "char", ["char", "byte"])
 
         if (e.affectsConfiguration(`${EXTN_QUALIFIER}.statusbar`))
           updateStatusBarItemPriority(
